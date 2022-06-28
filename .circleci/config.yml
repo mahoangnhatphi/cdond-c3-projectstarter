@@ -17,7 +17,7 @@ jobs:
           template: basic_fail_1
       - slack/notify:
           event: pass
-          template: success_tagged_deploy_1
+          template: basic_success_1
   build-frontend:
     docker:
       - image: circleci/node:13.8.0
@@ -34,12 +34,6 @@ jobs:
       - save_cache:
           paths: [frontend/node_modules]
           key: frontend-build
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   build-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -56,12 +50,6 @@ jobs:
       - save_cache:
           paths: [backend/node_modules]
           key: backend-build
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
   test-frontend:
     docker:
@@ -76,12 +64,6 @@ jobs:
             cd frontend
             npm install
             npm run test
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
                 
   test-backend:
     docker:
@@ -96,12 +78,6 @@ jobs:
             cd backend
             npm install
             npm run test
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
   scan-frontend:
     docker:
@@ -117,12 +93,6 @@ jobs:
             npm install
             # npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
 
   scan-backend:
     docker:
@@ -138,35 +108,28 @@ jobs:
             npm install
             # npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
-      - slack/notify:
-          event: fail
-          template: basic_fail_1
-      - slack/notify:
-          event: pass
-          template: success_tagged_deploy_1
   
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
   default:
     jobs:
-      - build-frontend:
-          context: slack-secrets
-      - build-backend:
-          context: slack-secrets
-      - test-frontend:
-          context: slack-secrets
+      - build-frontend
+      - build-backend
+      - test-frontend
           requires: [build-frontend]
       - test-backend:
-          context: slack-secrets
           requires: [build-backend]
       - scan-frontend:
-          context: slack-secrets
           requires: [build-frontend]
       - scan-backend:
-          context: slack-secrets
           requires: [build-backend]
-  send-notification:
-    jobs:
       - notify:
           context: slack-secrets
+          requires:
+            - build-frontend
+            - build-backend
+            - test-frontend
+            - test-backend
+            - scan-frontend
+            - scan-backend
