@@ -92,7 +92,7 @@ describe('<Pagination>', () => {
             .find(Button)
             .at(0)
             .props().disabled,
-        ).toEqual(false);
+        ).toEqual(true);
         expect(
           wrapper
             .find(Button)
