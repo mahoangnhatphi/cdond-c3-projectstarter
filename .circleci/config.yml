@@ -2,6 +2,9 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+orbs: 
+  slack: circleci/slack@4.10.1
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -111,3 +114,12 @@ workflows:
           requires: [build-frontend]
       - scan-backend:
           requires: [build-backend]
+      - slack/on-hold:
+          context: slack-secrets
+          requires:
+            - build-frontend
+            - build-backend
+            - test-frontend
+            - test-backend
+            - scan-frontend
+            - scan-backend
