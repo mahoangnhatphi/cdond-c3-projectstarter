@@ -9,6 +9,7 @@ orbs:
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   notify:
+    context: slack-secrets
     docker:
       - image: 'cimg/base:stable'
     steps:
@@ -35,9 +36,11 @@ jobs:
           paths: [frontend/node_modules]
           key: frontend-build
       - slack/notify:
+          context: slack-secrets
           event: fail
           template: basic_fail_1
       - slack/notify:
+          context: slack-secrets
           event: pass
           template: success_tagged_deploy_1
   build-backend:
@@ -57,9 +60,11 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
       - slack/notify:
+          context: slack-secrets
           event: fail
           template: basic_fail_1
       - slack/notify:
+          context: slack-secrets
           event: pass
           template: success_tagged_deploy_1
 
@@ -77,9 +82,11 @@ jobs:
             npm install
             npm run test
       - slack/notify:
+          context: slack-secrets
           event: fail
           template: basic_fail_1
       - slack/notify:
+          context: slack-secrets
           event: pass
           template: success_tagged_deploy_1
                 
@@ -97,9 +104,11 @@ jobs:
             npm install
             npm run test
       - slack/notify:
+          context: slack-secrets
           event: fail
           template: basic_fail_1
       - slack/notify:
+          context: slack-secrets
           event: pass
           template: success_tagged_deploy_1
 
@@ -118,9 +127,11 @@ jobs:
             # npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
       - slack/notify:
+          context: slack-secrets
           event: fail
           template: basic_fail_1
       - slack/notify:
+          context: slack-secrets
           event: pass
           template: success_tagged_deploy_1
 
@@ -139,9 +150,11 @@ jobs:
             # npm install oauth-sign@^0.9.0
             npm audit --audit-level=critical
       - slack/notify:
+          context: slack-secrets
           event: fail
           template: basic_fail_1
       - slack/notify:
+          context: slack-secrets
           event: pass
           template: success_tagged_deploy_1
   
